@@ -25,13 +25,16 @@ logger.setLevel(logging.INFO)
 logger.addHandler(file_handler)
 
 sound_service = SoundService()
-sound_service.analyze()
-
 
 @app.route("/")
 def home():
     app.logger.info("[api-home]")
     return "Home"
+
+@app.route("/api/v1/train", methods=["GET"])
+def train_models():
+    global sound_service
+    sound_service.train()
 
 @app.route("/api/v1/upload", methods=["POST"])
 @cross_origin()
