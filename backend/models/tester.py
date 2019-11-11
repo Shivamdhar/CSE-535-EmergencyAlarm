@@ -2,6 +2,7 @@ import crepe
 import librosa.display
 import math
 import numpy
+from numpy import *
 import os
 from pylab import *
 from scipy.io import wavfile
@@ -10,10 +11,17 @@ class Tester():
     def __init__(self):
         self.filename = "firetruck2.wav"
 
-    def fetch_test_data(self):
-        fs, data = wavfile.read(self.filename)
+    def fetch_test_data(self, filename):
+        print("test data: " + filename)
+        fs, data = wavfile.read(filename)
+        data = numpy.nan_to_num(data)
+
         blockLinearRms = numpy.sqrt(numpy.mean(data**2)) #amplitude
+        if blockLinearRms == numpy.nan:
+            blockLinearRms = 0
         blockLogRms = 20 * math.log10(blockLinearRms) #loudness
+        if blockLogRms == numpy.nan:
+            blockLogRms = 0
 
         data = data / (2.**15)
         if len(data.shape) == 1:
@@ -35,4 +43,4 @@ class Tester():
         if pitch == numpy.nan:
             pitch = 0
 
-        return [str(blockLinearRms),str(blockLogRms),str(rms_val),str(pitch)]
+        return numpy.nan_to_num([blockLinearRms,blockLogRms,rms_val,pitch])
