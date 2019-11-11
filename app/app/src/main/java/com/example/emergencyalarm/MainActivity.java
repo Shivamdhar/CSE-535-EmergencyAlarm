@@ -1,7 +1,6 @@
 package com.example.emergencyalarm;
 
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,14 +13,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -34,6 +34,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
+    boolean notify = false;
     private Uri fileUri;
     int count = 1;
     private Button startbtn;
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
 //    UPLOAD AUDIO METHODS =========================================================================
 
 
@@ -78,15 +78,11 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             try {
 
-                String url = "http://10.218.107.121/cse535/upload_video.php";
+                String url = "http://51df0b00.ngrok.io/api/v1/upload";
                 String charset = "UTF-8";
-                String group_id = "40";
-                String ASUid = "1200072576";
-                String accept = "1";
 
                 System.out.println(fileUri.getPath());
-                File audioFile = new File(fileUri.getPath());
-//                File videoFile = new File(Environment.getExternalStorageDirectory()+"/my_folder/Action1.mp4");
+                File files = new File(fileUri.getPath());
                 String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
                 String CRLF = "\r\n"; // Line separator required by multipart/form-data.
 
@@ -100,55 +96,27 @@ public class MainActivity extends AppCompatActivity {
                         OutputStream output = connection.getOutputStream();
                         PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
                 ) {
-                    // Send normal accept.
-                    writer.append("--" + boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"accept\"").append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
-                    writer.append(CRLF).append(accept).append(CRLF).flush();
-
-                    // Send normal accept.
-                    writer.append("--" + boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"id\"").append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
-                    writer.append(CRLF).append(ASUid).append(CRLF).flush();
-
-                    // Send normal accept.
-                    writer.append("--" + boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"group_id\"").append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
-                    writer.append(CRLF).append(group_id).append(CRLF).flush();
-
-
                     // Send audio file.
                     writer.append("--" + boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"uploaded_file\"; filename=\"" + audioFile.getName() + "\"").append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"uploaded_file\"; filename=\"" + files.getName() + "\"").append(CRLF);
                     writer.append("Content-Type: audio/3gp; charset=" + charset).append(CRLF); // Text file itself must be saved in this charset!
                     writer.append(CRLF).flush();
-                    FileInputStream vf = new FileInputStream(audioFile);
+                    FileInputStream vf = new FileInputStream(files);
                     try {
                         byte[] buffer = new byte[1024];
                         int bytesRead = 0;
                         while ((bytesRead = vf.read(buffer, 0, buffer.length)) >= 0)
                         {
                             output.write(buffer, 0, bytesRead);
-
                         }
-                        //   output.close();
-                        //Toast.makeText(getApplicationContext(),"Read Done", Toast.LENGTH_LONG).show();
                     }catch (Exception exception)
                     {
-
-
-                        //Toast.makeText(getApplicationContext(),"output exception in catch....."+ exception + "", Toast.LENGTH_LONG).show();
                         Log.d("Error", String.valueOf(exception));
                         publishProgress(String.valueOf(exception));
-                        // output.close();
-
                     }
 
                     output.flush(); // Important before continuing with writer!
                     writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
-
 
                     // End of multipart/form-data.
                     writer.append("--" + boundary + "--").append(CRLF).flush();
@@ -158,9 +126,16 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                // Request is lazily fired whenever you need to obtain information about response.
-                int responseCode = ((HttpURLConnection) connection).getResponseCode();
-                System.out.println(responseCode); // Should be 200
+                System.out.println(connection.getContent());
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String decodedString;
+                while((decodedString = in.readLine()) != null){
+                    if(decodedString.equals("True")){
+                        notify = true;
+                    }
+                    System.out.println(notify);
+                }
+                in.close();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -169,18 +144,12 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-
         @Override
         protected void onProgressUpdate(String... text) {
             Toast.makeText(getApplicationContext(), "In Background Task " + text[0], Toast.LENGTH_LONG).show();
         }
 
     }
-
-
-
-
-
 
 
 
