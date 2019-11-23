@@ -8,9 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     int count = 1;
     private Button startbtn;
     private Button uploadbtn;
+    private Button vibratebtn;
+    private Vibrator vibrator;
+    private SeekBar seekBar;
     private MediaRecorder mRecorder;
     private static final String LOG_TAG = "AudioRecording";
     private static String mFileName = null;
@@ -56,6 +62,40 @@ public class MainActivity extends AppCompatActivity {
                 recordAudio();
             }
         });
+        seekBar = findViewById(R.id.seekBar); // initiate the Seek bar
+
+        int maxValue=seekBar.getMax();
+
+        int seekBarValue= seekBar.getProgress();
+
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progressChangedValue = 0;
+            int seekBarValue= seekBar.getProgress();
+            int vibrationAmplitude = (seekBarValue/100)*255;
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChangedValue = progress;
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Seek bar progress is :" + progressChangedValue,
+                        Toast.LENGTH_SHORT).show();
+                vibrateMobile(vibrationAmplitude);
+            }
+
+
+        });
+
+
+
+
+
 
         uploadbtn = findViewById(R.id.uploadButton);
         uploadbtn.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +106,15 @@ public class MainActivity extends AppCompatActivity {
                 up1.execute();
             }
         });
+    }
+
+
+    public void vibrateMobile(int vibrationAmplitude){
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, vibrationAmplitude));
+        } else {
+            vibrator.vibrate(200);
+        }
     }
 
 //    UPLOAD AUDIO METHODS =========================================================================
