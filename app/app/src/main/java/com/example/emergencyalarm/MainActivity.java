@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             try {
 
-                String url = "http://51df0b00.ngrok.io/api/v1/upload";
+                String url = "http://d752e89d.ngrok.io/api/v1/upload";
                 String charset = "UTF-8";
 
                 System.out.println(fileUri.getPath());
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                System.out.println(connection.getContent());
+//                System.out.println(connection.getContent());
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String decodedString;
                 while((decodedString = in.readLine()) != null){
@@ -156,8 +156,15 @@ public class MainActivity extends AppCompatActivity {
 //    RECORD AUDIO METHODS =========================================================================
 
     private void recordAudio() {
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/CSE535Project/SoundRecordings/AudioRecording" + count + ".3gp";
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CSE535Project/SoundRecordings/";
+        File dir = new File(mFileName);
+
+        if(!dir.exists()) {
+            if(dir.mkdirs());
+        }
+
+        mFileName += "AudioRecording" + count + ".3gp";
+
 
         if (CheckPermissions()) {
             startbtn.setEnabled(false);
