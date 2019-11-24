@@ -1,5 +1,7 @@
 package com.example.emergencyalarm;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -42,13 +44,14 @@ public class MainActivity extends AppCompatActivity {
     int count = 1;
     private Button startbtn;
     private Button uploadbtn;
-    private Button vibratebtn;
+    private Button optionsBtn;
     private Vibrator vibrator;
     private SeekBar seekBar;
     private MediaRecorder mRecorder;
     private static final String LOG_TAG = "AudioRecording";
     private static String mFileName = null;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progressChangedValue = 0;
-            int seekBarValue= seekBar.getProgress();
-            int vibrationAmplitude = (seekBarValue/100)*255;
+            //int seekBarValue= seekBar.getProgress();
+            int vibrationAmplitude = (progressChangedValue*255)/100;
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressChangedValue = progress;
             }
@@ -84,15 +87,23 @@ public class MainActivity extends AppCompatActivity {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Seek bar progress is :" + progressChangedValue,
+                Toast.makeText(MainActivity.this, "Amplitude of Vibration is :" + progressChangedValue,
                         Toast.LENGTH_SHORT).show();
+                vibrationAmplitude = (progressChangedValue*255)/100;
                 vibrateMobile(vibrationAmplitude);
             }
 
 
         });
 
-
+        optionsBtn = findViewById(R.id.optionsButton);
+        optionsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -102,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 UploadTask up1 = new UploadTask();
-                Toast.makeText(getApplicationContext(),"Stating to Upload",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Starting to Upload",Toast.LENGTH_LONG).show();
                 up1.execute();
             }
         });
