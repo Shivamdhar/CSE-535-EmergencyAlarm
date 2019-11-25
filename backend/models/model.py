@@ -26,7 +26,7 @@ class Model():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0, random_state=1)
 
         clf = RandomForestClassifier()
-        clf = self.clf.fit(X_train,y_train)
+        clf = clf.fit(X_train,y_train)
         dill.dump(clf, open(self.pickle_file, "w"))
 
         return "Training done"
