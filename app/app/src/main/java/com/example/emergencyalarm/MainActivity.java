@@ -2,6 +2,7 @@ package com.example.emergencyalarm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -52,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private static String mFileName = null;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
     final Context context = this;
+    private String preferenceFile = "com.example.emergencyAlarm.";
+    SharedPreferences pref = getApplicationContext().getSharedPreferences(preferenceFile+getString(R.string.app_name), 0);  // 0 - for private mode
+    SharedPreferences.Editor editor = pref.edit();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,5 +280,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void RequestPermissions() {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
+    }
+
+    public void handlenotify(){
+
     }
 }
