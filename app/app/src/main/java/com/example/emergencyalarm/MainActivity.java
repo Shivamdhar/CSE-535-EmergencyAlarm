@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
     public void flashLight()
     {
         CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        String myString = "0101010101010101";
+        String myString = "010101010101010101010101010101";
         long blinkDelay = 50; //Delay in ms
         for (int i = 0; i < myString.length(); i++) {
             if (myString.charAt(i) == '0') {
