@@ -10,7 +10,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     boolean notify = false;
     private Uri fileUri;
     int count = 1;
-    private Button startbtn;
-    private Button uploadbtn;
+    private ImageButton sensebtn;
+    private ImageButton uploadbtn;
     private MediaRecorder mRecorder;
     private static final String LOG_TAG = "AudioRecording";
     private static String mFileName = null;
@@ -49,15 +49,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startbtn = findViewById(R.id.recordButton);
-        startbtn.setOnClickListener(new View.OnClickListener() {
+        sensebtn = findViewById(R.id.imageButton);
+        sensebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recordAudio();
             }
         });
 
-        uploadbtn = findViewById(R.id.uploadButton);
+        uploadbtn = findViewById(R.id.imageButton2);
         uploadbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,14 +75,15 @@ public class MainActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected String doInBackground(String... strings) {
+        protected String doInBackground(String... params) {
             try {
 
-                String url = "http://d752e89d.ngrok.io/api/v1/upload";
+                String url = "http://567f200d.ngrok.io/api/v1/upload";
                 String charset = "UTF-8";
 
                 System.out.println(fileUri.getPath());
                 File files = new File(fileUri.getPath());
+
                 String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
                 String CRLF = "\r\n"; // Line separator required by multipart/form-data.
 
@@ -130,10 +131,11 @@ public class MainActivity extends AppCompatActivity {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String decodedString;
                 while((decodedString = in.readLine()) != null){
+                    System.out.println("EMERGENCY ALARM: " + decodedString);
                     if(decodedString.equals("True")){
                         notify = true;
                     }
-                    System.out.println(notify);
+//                    System.out.println(notify);
                 }
                 in.close();
 
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (CheckPermissions()) {
-            startbtn.setEnabled(false);
+//            sensebtn.setEnabled(false);
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -188,12 +190,13 @@ public class MainActivity extends AppCompatActivity {
                     mRecorder.stop();
                     mRecorder.release();
                     mRecorder = null;
-                    startbtn.setEnabled(true);
+//                    sensebtn.setEnabled(true);
                     count++;
                     fileUri = Uri.fromFile(new File(mFileName));
-                    Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Recording Completed", Toast.LENGTH_LONG).show();
                 }
             }, 5000);
+
         } else {
             RequestPermissions();
         }
