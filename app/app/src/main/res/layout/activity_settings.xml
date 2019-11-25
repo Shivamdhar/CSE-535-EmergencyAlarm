@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <CheckBox
+        android:id="@+id/vibrate_checkbox"
+        android:layout_width="236dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="44dp"
+        android:text="@string/vibrate_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.148"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        android:onClick="onCheckboxClicked"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="209dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/settings_header_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.011"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/flashlight_checkbox"
+        android:layout_width="236dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/flash_screen_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.154"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vibrate_checkbox"
+        android:onClick="onCheckboxClicked"/>
+
+    <CheckBox
+        android:id="@+id/notification_checkbox"
+        android:layout_width="237dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/flash_light_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.155"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flashlight_checkbox"
+        android:onClick="onCheckboxClicked"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
