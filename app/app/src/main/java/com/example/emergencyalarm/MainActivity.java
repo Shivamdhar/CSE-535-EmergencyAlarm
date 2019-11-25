@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -24,6 +25,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,10 +39,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
     boolean notify = false;
-    private Uri fileUri;
-    int count = 1;
-    private Button startbtn;
-    private Button uploadbtn;
+    private ImageButton senseBtn;
     private MediaRecorder mRecorder;
     private static final String LOG_TAG = "AudioRecording";
     private static String mFileName = null;
@@ -49,23 +50,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startbtn = findViewById(R.id.recordButton);
-        startbtn.setOnClickListener(new View.OnClickListener() {
+//        TODO:
+//        have a "start sensing" button and an "abort" button. Start recording audio of 5 seconds
+//        after pressing "start sensing" button. upload the audio, get the response.
+//        If the response is "true", start flashing the lights while internally pressing the "abort" button.
+//        Else, record another chunk of audio and continue until "abort" button is pressed.
+
+
+        senseBtn = findViewById(R.id.imageButton);
+        senseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recordAudio();
             }
         });
 
-        uploadbtn = findViewById(R.id.uploadButton);
-        uploadbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UploadTask up1 = new UploadTask();
-                Toast.makeText(getApplicationContext(),"Stating to Upload",Toast.LENGTH_LONG).show();
-                up1.execute();
-            }
-        });
     }
 
 //    UPLOAD AUDIO METHODS =========================================================================
@@ -75,14 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected String doInBackground(String... strings) {
+        protected String doInBackground(String... params) {
             try {
 
-                String url = "http://d752e89d.ngrok.io/api/v1/upload";
+                String url = "http://567f200d.ngrok.io/api/v1/upload";
                 String charset = "UTF-8";
 
-                System.out.println(fileUri.getPath());
-                File files = new File(fileUri.getPath());
+                System.out.println(params[0]);
+                File files = new File(params[0]);
                 String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
                 String CRLF = "\r\n"; // Line separator required by multipart/form-data.
 
@@ -133,9 +132,10 @@ public class MainActivity extends AppCompatActivity {
                     if(decodedString.equals("True")){
                         notify = true;
                     }
-                    System.out.println(notify);
+                    System.out.println("EMERGENCY ALARM: " + notify);
                 }
                 in.close();
+                files.delete();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -151,11 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
 //    RECORD AUDIO METHODS =========================================================================
 
     private void recordAudio() {
+
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CSE535Project/SoundRecordings/";
         File dir = new File(mFileName);
 
@@ -163,11 +162,10 @@ public class MainActivity extends AppCompatActivity {
             if(dir.mkdirs());
         }
 
-        mFileName += "AudioRecording" + count + ".3gp";
-
+        mFileName += "AudioRecording.3gp";
 
         if (CheckPermissions()) {
-            startbtn.setEnabled(false);
+            senseBtn.setEnabled(false);
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -188,12 +186,20 @@ public class MainActivity extends AppCompatActivity {
                     mRecorder.stop();
                     mRecorder.release();
                     mRecorder = null;
-                    startbtn.setEnabled(true);
-                    count++;
-                    fileUri = Uri.fromFile(new File(mFileName));
+                    senseBtn.setEnabled(true);
                     Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
                 }
             }, 5000);
+
+            Handler delay = new Handler();
+            delay.postDelayed(new Runnable() {
+                public void run() {
+                    UploadTask up1 = new UploadTask();
+                    up1.execute(mFileName);
+                }
+            }, 4000);
+
+
         } else {
             RequestPermissions();
         }
