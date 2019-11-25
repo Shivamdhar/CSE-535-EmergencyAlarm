@@ -15,6 +15,8 @@ public class SettingsActivity extends AppCompatActivity {
     private CheckBox notificationCheckBox;
     private String preferenceFile = "com.example.emergencyAlarm.";
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +28,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences(preferenceFile+getString(R.string.app_name), 0); // 0 - for private mode
 
-        vibrateCheckBox.setChecked(pref.getBoolean("vibrate_check",false));
-        flashlightCheckBox.setChecked(pref.getBoolean("flashlight_check",false));
-        notificationCheckBox.setChecked(pref.getBoolean("notification_check",false));
+        vibrateCheckBox.setChecked(pref.getBoolean(StaticKeys.VIBRATE_KEY,false));
+        flashlightCheckBox.setChecked(pref.getBoolean(StaticKeys.FLASH_SCREEN_KEY,false));
+        notificationCheckBox.setChecked(pref.getBoolean(StaticKeys.FLASH_LIGHT_KEY,false));
 
     }
 
@@ -42,21 +44,21 @@ public class SettingsActivity extends AppCompatActivity {
         switch(view.getId()) {
             case R.id.vibrate_checkbox:
                 if (checked)
-                    editor.putBoolean("vibrate_check", true);
+                    editor.putBoolean(StaticKeys.VIBRATE_KEY, true);
             else
-                    editor.putBoolean("vibrate_check", false);
+                    editor.putBoolean(StaticKeys.VIBRATE_KEY, false);
                 break;
             case R.id.flashlight_checkbox:
                 if (checked)
-                    editor.putBoolean("flashlight_check", true);
+                    editor.putBoolean(StaticKeys.FLASH_SCREEN_KEY, true);
             else
-                    editor.putBoolean("flashlight_check", false);
+                    editor.putBoolean(StaticKeys.FLASH_SCREEN_KEY, false);
                 break;
             case R.id.notification_checkbox:
                 if (checked)
-                    editor.putBoolean("notification_check", true);
+                    editor.putBoolean(StaticKeys.FLASH_LIGHT_KEY, true);
             else
-                    editor.putBoolean("notification_check", false);
+                    editor.putBoolean(StaticKeys.FLASH_LIGHT_KEY, false);
                 break;
         }
 

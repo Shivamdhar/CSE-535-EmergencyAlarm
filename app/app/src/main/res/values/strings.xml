@@ -5,11 +5,13 @@
     <string name="upload_button">Upload</string>
     <string name="record_button">Record</string>
     <string name="main_heading">Record External Sound</string>
+    <string name="vibration_amplitude">Select vibration amplitude</string>
+    <string name="flash_screen_color">Select the color to flash</string>
 
     <!-- Settings page-->
     <string name="vibrate_checkbox">Vibrate on emergency</string>
-    <string name="flashlight_checkbox">Flashlight on emergency</string>
-    <string name="notification_checkbox">Notification light on emergency</string>
+    <string name="flash_screen_checkbox">Flash screen on emergency</string>
+    <string name="flash_light_checkbox">Flash light on emergency</string>
     <string name="settings_header_text">Select options from below</string>
     <string name="save_button">Save</string>
 
