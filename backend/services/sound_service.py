@@ -11,7 +11,7 @@ class SoundService():
 
     def analyze(self, filename):
         wavfile = self.convert_3gp_to_wav(filename)
-        self.model.train()
+        # self.model.train()
         label = self.model.test(wavfile)
 
         if str(label[1]) == "0":
