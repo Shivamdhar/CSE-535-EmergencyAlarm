@@ -20,6 +20,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
     boolean notify = true;
     private Uri fileUri;
     int count = 1;
-    private Button startbtn;
-    private Button uploadbtn;
+    private ImageButton sensebtn;
+    private ImageButton uploadbtn;
     private Button optionsBtn;
     private Vibrator vibrator;
     private SeekBar seekBar;
@@ -72,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startbtn = findViewById(R.id.recordButton);
-        startbtn.setOnClickListener(new View.OnClickListener() {
+        sensebtn = findViewById(R.id.imageButton);
+        sensebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recordAudio();
@@ -140,11 +141,11 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.GreenButton:
                         editor.putInt(StaticKeys.FLASH_SCREEN_TOGGLE_COLOR_KEY, Color.GREEN);
                         break;
-                    case R.id.RedButton:
-                        editor.putInt(StaticKeys.FLASH_SCREEN_TOGGLE_COLOR_KEY, Color.RED);
-                        break;
                     case R.id.BlackButton:
                         editor.putInt(StaticKeys.FLASH_SCREEN_TOGGLE_COLOR_KEY, Color.BLACK);
+                        break;
+                    case R.id.RedButton:
+                        editor.putInt(StaticKeys.FLASH_SCREEN_TOGGLE_COLOR_KEY, Color.RED);
                         break;
                 }
                 editor.commit();
@@ -162,8 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-        uploadbtn = findViewById(R.id.uploadButton);
+        uploadbtn = findViewById(R.id.imageButton2);
         uploadbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             try {
 
-                String url = "http://d752e89d.ngrok.io/api/v1/upload";
+                String url = "http://6bbfcd54.ngrok.io/api/v1/upload";
                 String charset = "UTF-8";
 
                 System.out.println(fileUri.getPath());
@@ -245,11 +245,10 @@ public class MainActivity extends AppCompatActivity {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String decodedString;
                 while((decodedString = in.readLine()) != null){
+                    System.out.println(decodedString);
                     if(decodedString.equals("True")){
-                        notify = true;
                         handleNotification();
                     }
-                    System.out.println(notify);
                 }
                 in.close();
 
@@ -283,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (CheckPermissions()) {
-            startbtn.setEnabled(false);
+            sensebtn.setEnabled(false);
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -304,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                     mRecorder.stop();
                     mRecorder.release();
                     mRecorder = null;
-                    startbtn.setEnabled(true);
+                    sensebtn.setEnabled(true);
                     count++;
                     fileUri = Uri.fromFile(new File(mFileName));
                     Toast.makeText(getApplicationContext(), "Recording Stopped", Toast.LENGTH_LONG).show();
@@ -363,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             public void run() {
                 int i = 0;
-                while (true && i < StaticKeys.TIME_TO_FLASH * 1000 / StaticKeys.FLASH_FLICKER_INTERVAL) {
+                while (i < StaticKeys.TIME_TO_FLASH * 1000 / StaticKeys.FLASH_FLICKER_INTERVAL) {
                     try {
                         Thread.sleep(StaticKeys.FLASH_FLICKER_INTERVAL);
                     }
