@@ -10,5 +10,5 @@ public class StaticKeys {
     public static final int VIBRATION_DEFAULT_AMPLITUDE = 125;
     public static final int VIBRATIONS_DURATION = 4000; // millisecs
     public final static int FLASH_FLICKER_INTERVAL = 150; // 1000=1sec
-    public final static int TIME_TO_FLASH  = 8; // secs
+    public final static int TIME_TO_FLASH  = 5; // secs
 }

@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
         if(pref.getBoolean(StaticKeys.FLASH_LIGHT_KEY,false)){
             flashLight();
         }
-        myView.setBackgroundColor(Color.WHITE);
+
     }
 
 
@@ -373,6 +373,10 @@ public class MainActivity extends AppCompatActivity {
                     updateColor(color);
                     i++;
                     whichColor = !whichColor;
+                }
+                if(!whichColor){
+                    whichColor = !whichColor;
+                    updateColor(color);
                 }
             }
         }).start();
@@ -402,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             rg.setVisibility(View.VISIBLE);
         }
+        //handleNotification();
     }
 
     public void updateColor(final int color) {
